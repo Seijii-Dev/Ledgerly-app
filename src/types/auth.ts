@@ -13,6 +13,7 @@ export type AuthContextValue = {
   loading: boolean;
   register: (name: string, email: string, password: string) => Promise<{ ok: boolean; message?: string }>;
   login: (email: string, password: string) => Promise<{ ok: boolean; message?: string }>;
+  googleLogin: () => Promise<{ ok: boolean; message?: string }>;
   logout: () => Promise<void>;
   refreshAccount: (account: RemoteAccount) => void;
 };

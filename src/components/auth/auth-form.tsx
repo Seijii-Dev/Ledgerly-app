@@ -19,10 +19,11 @@ interface AuthFormProps {
   onModeChange: (mode: "login" | "register") => void;
   onBack: () => void;
   onSubmit: (values: { name: string; email: string; password: string }) => void;
+  onGoogleSignIn: () => void;
   busy: boolean;
 }
 
-export function AuthForm({ mode, onModeChange, onBack, onSubmit, busy }: AuthFormProps) {
+export function AuthForm({ mode, onModeChange, onBack, onSubmit, onGoogleSignIn, busy }: AuthFormProps) {
   const { colors } = useTheme();
   const isRegister = mode === "register";
 
@@ -194,6 +195,30 @@ export function AuthForm({ mode, onModeChange, onBack, onSubmit, busy }: AuthFor
           <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
         </Pressable>
 
+        {/* Social sign-in */}
+        <View style={styles.socialDivider}>
+          <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+          <Text style={[styles.dividerText, { color: colors.subtle }]}>OR CONTINUE WITH</Text>
+          <View style={[styles.dividerLine, { backgroundColor: colors.border }]} />
+        </View>
+        <Pressable
+          disabled={busy}
+          style={({ pressed }) => [
+            styles.googleButton,
+            { backgroundColor: colors.surface, borderColor: colors.border },
+            pressed && styles.pressed,
+            busy && { opacity: 0.65 },
+          ]}
+          onPress={() => {
+            Haptics.selectionAsync();
+            onGoogleSignIn();
+          }}
+        >
+          <View style={[styles.googleMark, { backgroundColor: colors.surfaceSubtle, borderColor: colors.border }]}>
+            <Text style={[styles.googleMarkText, { color: colors.foreground }]}>G</Text>
+          </View>
+          <Text style={[styles.googleButtonText, { color: colors.foreground }]}>Continue with Google</Text>
+        </Pressable>
         {/* Mode Switch text */}
         <Pressable
           style={styles.switchMode}
@@ -328,6 +353,52 @@ const styles = StyleSheet.create({
   },
   formSubmitBtn: {
     marginTop: 22,
+  },
+  socialDivider: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 22,
+    marginBottom: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    fontSize: 8,
+    fontWeight: "800",
+    letterSpacing: 1.1,
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    height: 50,
+    borderRadius: 14,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  googleMark: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googleMarkText: {
+    fontSize: 16,
+    fontWeight: "800",
+  },
+  googleButtonText: {
+    fontSize: 13,
+    fontWeight: "800",
   },
   switchMode: {
     alignItems: "center",

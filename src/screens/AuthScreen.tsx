@@ -30,7 +30,7 @@ function validateAuthInput(
 }
 
 export default function AuthScreen() {
-  const { register, login, account } = useAuth();
+  const { register, login, googleLogin, account } = useAuth();
   const { colors } = useTheme();
 
   const [mode, setMode] = useState<"welcome" | "login" | "register">("welcome");
@@ -44,6 +44,23 @@ export default function AuthScreen() {
     }
   }, [account]);
 
+  const handleGoogleSignIn = async () => {
+    setBusy(true);
+    setErrorMessage(null);
+    try {
+      const result = await googleLogin();
+      if (!result.ok) {
+        if (result.message) setErrorMessage(result.message);
+        return;
+      }
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      appNavigation.replace("Main");
+    } catch {
+      setErrorMessage("Google sign-in could not be completed. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
   const handleSubmit = async (values: { name: string; email: string; password: string }) => {
     const activeMode = mode === "welcome" ? "register" : mode;
     const validationError = validateAuthInput(activeMode, values);
@@ -93,6 +110,7 @@ export default function AuthScreen() {
           onModeChange={setMode}
           onBack={() => setMode("welcome")}
           onSubmit={handleSubmit}
+          onGoogleSignIn={handleGoogleSignIn}
           busy={busy}
         />
       )}

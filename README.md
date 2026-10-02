@@ -38,3 +38,16 @@ The APK is uploaded as the `expense-tracker-release-apk` workflow artifact. This
 ## API configuration
 
 The current API endpoint is configured in `src/lib/api-client.ts`; replace it with your backend URL before release if necessary.
+
+## Google login configuration
+
+Google login is available on both the Sign In and Create Account screens. The app signs in with the native Google SDK, sends the returned ID token to the Ledgerly backend, and stores the resulting Supabase access token.
+
+Before building the app, edit `src/config.ts`:
+
+```ts
+export const GOOGLE_WEB_CLIENT_ID = "your-web-client-id.apps.googleusercontent.com";
+export const API_BASE_URL = "https://your-ledgerly-backend.vercel.app";
+```
+
+The Google provider must also be enabled in Supabase Authentication. Configure a Web OAuth client ID and an Android OAuth client ID for package `expense.tracker.group6` using the SHA-1 fingerprint of the signing key. The Web client ID is used by `GoogleSignin.configure` and must match the client ID configured in Supabase.

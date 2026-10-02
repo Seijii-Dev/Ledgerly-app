@@ -1,9 +1,10 @@
 import { ApiResult, RemoteAccount, RemoteExpense } from "@/types/api";
+import { API_BASE_URL } from "@/config";
 
 export type { ApiResult, RemoteAccount, RemoteExpense };
 
 // The API URL is public and bundled into the Android app.
-const API_URL = "https://expense-tracker-apis-gamma.vercel.app";
+const API_URL = API_BASE_URL
 
 async function request<T>(
   path: string,
@@ -56,6 +57,11 @@ export const api = {
     request<{ token: string; account: RemoteAccount }>("/api/auth/login", {
       method: "POST",
       body: { email, password },
+    }),
+  googleLogin: (idToken: string) =>
+    request<{ token: string; refreshToken?: string; account: RemoteAccount }>("/api/auth/google", {
+      method: "POST",
+      body: { idToken },
     }),
 
   me: (token: string) => request<{ account: RemoteAccount }>("/api/auth/me", { token }),

@@ -1,4 +1,6 @@
 import * as SecureStore from "@/native/secure-store";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GOOGLE_WEB_CLIENT_ID } from "@/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
@@ -277,7 +279,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const googleLogin = useCallback(async () => {
+    try {
+      if (GOOGLE_WEB_CLIENT_ID.startsWith("YOUR_")) {
+        return { ok: false, message: "Google login is not configured yet. Add the Web OAuth client ID in src/config.ts." };
+      }
+      GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const response = await GoogleSignin.signIn();
+      if (response.type === "cancelled") return { ok: false, message: "" };
+      const idToken = response.data.idToken;
+      if (!idToken) return { ok: false, message: "Google did not return an ID token." };
+      const result = await api.googleLogin(idToken);
+      if (!result.ok) return { ok: false, message: result.message };
+      await Promise.all([
+        safeSecureSet(STORAGE_KEYS.authToken, result.token),
+        AsyncStorage.setItem(STORAGE_KEYS.cachedAccount, JSON.stringify(result.account)),
+      ]);
+      setToken(result.token);
+      setAccount(result.account);
+      return { ok: true };
+    } catch (err) {
+      console.warn("Google sign-in exception:", err);
+      return { ok: false, message: "Google sign-in could not be completed. Please try again." };
+    }
+  }, []);
   const logout = useCallback(async () => {
+    try {
+      await GoogleSignin.signOut();
+    } catch {
+      // Non-fatal when the current session was not created with Google.
+    }
     await Promise.all([
       safeSecureDelete(STORAGE_KEYS.authToken),
       AsyncStorage.removeItem(STORAGE_KEYS.cachedAccount),
@@ -292,8 +324,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ account, token, loading, register, login, logout, refreshAccount }),
-    [account, token, loading, register, login, logout, refreshAccount]
+    () => ({ account, token, loading, register, login, googleLogin, logout, refreshAccount }),
+    [account, token, loading, register, login, googleLogin, logout, refreshAccount]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
