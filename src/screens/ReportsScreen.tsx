@@ -149,9 +149,9 @@ const styles = StyleSheet.create({
     minHeight: 160,
     paddingHorizontal: 20,
     marginTop: 8,
-    marginBottom: 16,
+    marginBottom: 18,
     borderRadius: 18,
-    backgroundColor: "#2A4740",
+    backgroundColor: "#0F5946",
   },
   heroValue: {
     fontFamily: "Fraunces_700Bold",
@@ -193,9 +193,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   panel: {
-    padding: 18,
-    marginBottom: 16,
-    borderRadius: 16,
+    padding: 20,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
   },
   panelHeader: {

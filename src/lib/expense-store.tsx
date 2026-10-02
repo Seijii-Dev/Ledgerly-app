@@ -252,14 +252,14 @@ export function ExpenseProvider({ children }: { children: React.ReactNode }) {
     return () => {
       mounted = false;
     };
-  }, [account?.email, token, refreshExpenses]);
+  }, [account, token, refreshExpenses]);
 
   // Persist local expenses to AsyncStorage whenever they change
   useEffect(() => {
     if (hydrated && account) {
       AsyncStorage.setItem(STORAGE_KEYS.userCache(account.email), JSON.stringify(expenses)).catch(() => undefined);
     }
-  }, [expenses, hydrated, account?.email]);
+  }, [expenses, hydrated, account]);
 
   const { monthTotal, todayTotal, remaining, budgetPercent, sortedExpenses } = useMemo(() => {
     const currentDate = getPhilippinesDate();

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleProp, TextStyle, ViewStyle } from "react-native";
+import { StyleProp, TextStyle } from "react-native";
 import { Ionicons } from "@/native/icons";
 import { Payment } from "@/types/expense";
 import { PAYMENT_ICON_COLORS, PAYMENT_ICON_NAMES } from "@/constants/categories";

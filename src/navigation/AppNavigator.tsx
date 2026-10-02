@@ -31,11 +31,11 @@ function MainTabs() {
     headerShown: false,
     tabBarActiveTintColor: colors.primary,
     tabBarInactiveTintColor: colors.muted,
-    tabBarStyle: { height: 82, paddingTop: 10, paddingBottom: 8, borderTopColor: colors.border, backgroundColor: colors.surface },
-    tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginBottom: 3 },
+    tabBarStyle: { height: 76, paddingTop: 7, paddingBottom: 6, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.surface },
+    tabBarLabelStyle: { fontSize: 10, fontWeight: '700', marginBottom: 1 },
     tabBarIcon: ({ color, focused }) => {
       const item = screens.find(([name]) => name === route.name);
-      return <View style={styles.iconWrap}><Ionicons name={(focused ? item?.[3] : item?.[2]) as any} color={color} size={22} /></View>;
+      return <View style={[styles.iconWrap, focused && { backgroundColor: colors.primarySoft }]}><Ionicons name={(focused ? item?.[3] : item?.[2]) as any} color={color} size={20} /></View>;
     },
   })}>{screens.map(([name, component]) => <Tabs.Screen key={name} name={name} component={component} />)}</Tabs.Navigator>;
 }
@@ -45,4 +45,4 @@ export default function AppNavigator() {
   if (loading) return null;
   return <NavigationContainer ref={navigationRef}><Stack.Navigator screenOptions={{ headerShown: false }}>{account ? <Stack.Screen name="Main" component={MainTabs} /> : <Stack.Screen name="Auth" component={AuthScreen} />}</Stack.Navigator></NavigationContainer>;
 }
-const styles = StyleSheet.create({ iconWrap: { height: 28, paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 14 } });
+const styles = StyleSheet.create({ iconWrap: { height: 30, minWidth: 42, paddingHorizontal: 11, alignItems: 'center', justifyContent: 'center', borderRadius: 15 } });

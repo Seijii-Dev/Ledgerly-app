@@ -118,7 +118,7 @@ export default function AuthScreen() {
       {/* Error Dialog Modal */}
       <ConfirmDialog
         visible={Boolean(errorMessage)}
-        title={mode === "register" ? "Registration Notice" : "Sign In Notice"}
+        title="Could not continue"
         message={errorMessage || ""}
         icon="alert-circle-outline"
         iconColor={colors.primary}

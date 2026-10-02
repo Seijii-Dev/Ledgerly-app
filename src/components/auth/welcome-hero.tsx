@@ -124,14 +124,14 @@ const styles = StyleSheet.create({
   welcomeScroll: {
     flexGrow: 1,
     paddingHorizontal: 22,
-    paddingTop: Platform.OS === "ios" ? 56 : 42,
+    paddingTop: Platform.OS === "ios" ? 48 : 32,
     paddingBottom: 40,
   },
   navBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 26,
+    marginBottom: 34,
   },
   brandRow: {
     flexDirection: "row",
@@ -169,10 +169,10 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontFamily: "Fraunces_700Bold",
-    fontSize: 38,
+    fontSize: 40,
     fontWeight: "700",
     letterSpacing: -1.6,
-    lineHeight: 44,
+    lineHeight: 46,
     textAlign: "center",
   },
   titleGradient: {
@@ -183,10 +183,10 @@ const styles = StyleSheet.create({
   },
   heroDisplayCard: {
     width: "100%",
-    padding: 24,
-    borderRadius: 24,
+    padding: 20,
+    borderRadius: 28,
     borderWidth: 1,
-    marginTop: 26,
+    marginTop: 30,
     alignItems: "center",
     shadowColor: "#000",
     shadowOpacity: 0.08,
@@ -198,9 +198,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   heroLargeLogo: {
-    width: 105,
-    height: 105,
-    borderRadius: 28,
+    width: 116,
+    height: 116,
+    borderRadius: 32,
   },
   livePulseDot: {
     position: "absolute",

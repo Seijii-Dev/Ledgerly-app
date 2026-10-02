@@ -13,6 +13,6 @@ export function ScreenContainer({ children, style }: PropsWithChildren<{ style?:
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F6F8F5" },
-  content: { flex: 1, paddingHorizontal: 20, paddingTop: Platform.OS === "android" ? 10 : 5 },
+  safe: { flex: 1 },
+  content: { flex: 1, paddingHorizontal: 20, paddingTop: Platform.OS === "android" ? 8 : 4 },
 });

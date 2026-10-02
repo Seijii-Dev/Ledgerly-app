@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 12,
-    marginBottom: 16,
+    marginBottom: 18,
   },
   headingIcon: {
     width: 34,

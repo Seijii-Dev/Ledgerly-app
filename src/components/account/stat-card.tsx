@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   stat: {
     flex: 1,
     padding: 12,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
   },
   statValue: {

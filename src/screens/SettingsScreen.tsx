@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     padding: 14,
-    marginBottom: 16,
-    borderRadius: 12,
+    marginBottom: 18,
+    borderRadius: 14,
     backgroundColor: "#FFF3EE",
     borderWidth: 1,
     borderColor: "#F4CBB5",
@@ -308,9 +308,9 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   panel: {
-    padding: 18,
-    marginBottom: 16,
-    borderRadius: 16,
+    padding: 20,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
   },
   accountRow: {
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 7,
-    borderRadius: 12,
+    borderRadius: 14,
   },
   pillDot: {
     width: 6,
@@ -437,8 +437,8 @@ const styles = StyleSheet.create({
   },
   backup: {
     padding: 20,
-    marginBottom: 16,
-    borderRadius: 16,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
   },
   backupIcon: {
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 14,
-    borderRadius: 12,
+    borderRadius: 14,
   },
   kicker: {
     fontSize: 10,

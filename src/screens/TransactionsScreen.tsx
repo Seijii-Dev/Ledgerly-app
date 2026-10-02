@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     padding: 16,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     marginTop: 14,
-    marginBottom: 16,
+    marginBottom: 18,
   },
   summaryCol: {
     alignItems: "center",
@@ -165,13 +165,13 @@ const styles = StyleSheet.create({
   list: {
     marginTop: 14,
     paddingHorizontal: 16,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
   },
   emptyContainer: {
     marginTop: 16,
     paddingVertical: 20,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     alignItems: "center",
   },

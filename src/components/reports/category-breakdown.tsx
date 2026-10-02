@@ -78,9 +78,9 @@ export function CategoryBreakdown({
 
 const styles = StyleSheet.create({
   panel: {
-    padding: 18,
-    marginBottom: 16,
-    borderRadius: 16,
+    padding: 20,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
   },
   panelHeader: {

@@ -168,7 +168,7 @@ export default function OverviewScreen() {
           <MetricCard
             label="Spent today"
             value={formatMoney(todayTotal)}
-            icon={<Ionicons name="cash-outline" size={16} color="#4D8AF0" />}
+            icon={<Ionicons name="cash-outline" size={16} color="#5A8FD8" />}
             tone="blue"
             foot={todayTotal > 0 ? "Updated live" : "No spending today"}
           />
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
   },
   notificationDot: {
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 18,
   },
   monthPill: {
     flexDirection: "row",
@@ -365,12 +365,12 @@ const styles = StyleSheet.create({
   },
   metricGrid: {
     gap: 10,
-    marginBottom: 16,
+    marginBottom: 18,
   },
   panel: {
-    padding: 18,
-    marginBottom: 16,
-    borderRadius: 16,
+    padding: 20,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
     shadowColor: "#000",
     shadowOpacity: 0.02,

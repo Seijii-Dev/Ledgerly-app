@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth-store";
 import { ThemeColors, darkColors, lightColors } from "@/constants/theme";
 import { STORAGE_KEYS } from "@/constants/storage";
@@ -30,15 +30,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       .catch(() => setDark(false));
   }, [key]);
 
-  const update = (value: boolean) => {
+  const update = useCallback((value: boolean) => {
     setDark(value);
     if (key) {
       AsyncStorage.setItem(key, String(value)).catch(() => undefined);
     }
-  };
+  }, [key]);
 
   const colors = dark ? darkColors : lightColors;
-  const context = useMemo(() => ({ dark, setDark: update, colors }), [dark, key, colors]);
+  const context = useMemo(() => ({ dark, setDark: update, colors }), [dark, update, colors]);
 
   return <ThemeContext.Provider value={context}>{children}</ThemeContext.Provider>;
 }

@@ -101,7 +101,7 @@ export function SkeletonCard({
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
 }) {
-  const { colors, dark } = useTheme();
+  const { colors } = useTheme();
   return (
     <View
       style={[
