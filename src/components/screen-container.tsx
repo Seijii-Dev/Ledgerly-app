@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === "android" ? 10 : 5,
-    paddingBottom: 96,
+    paddingHorizontal: 18,
+    paddingTop: Platform.OS === "android" ? 8 : 5,
+    paddingBottom: 112,
   },
 });

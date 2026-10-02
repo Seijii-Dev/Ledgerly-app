@@ -1,7 +1,7 @@
 import { BlurView, type BlurTint } from "@/native/blur";
 import { LinearGradient } from "@/native/linear-gradient";
 import React from "react";
-import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { useTheme } from "@/lib/theme-store";
 
 export type GlassVariant = "card" | "pill" | "sheet" | "nav";
@@ -26,7 +26,7 @@ export function GlassSurface({
   children,
   style,
   contentStyle,
-  radius = 22,
+  radius = 20,
   variant = "card",
   intensity,
 }: GlassSurfaceProps) {
@@ -42,12 +42,12 @@ export function GlassSurface({
           overflow: "hidden",
           borderWidth: 1,
           borderColor: colors.glassBorder,
-          backgroundColor: dark ? "rgba(18, 28, 36, 0.92)" : "rgba(255, 255, 255, 0.94)",
+          backgroundColor: colors.surface,
           shadowColor: dark ? "#000000" : "#4A6272",
-          shadowOpacity: dark ? 0.35 : 0.08,
+          shadowOpacity: dark ? 0.28 : 0.06,
           shadowRadius: variant === "pill" ? 6 : 14,
           shadowOffset: { width: 0, height: variant === "pill" ? 2 : 6 },
-          elevation: variant === "pill" ? 2 : 4,
+          elevation: variant === "pill" ? 2 : 3,
         },
         style,
       ]}

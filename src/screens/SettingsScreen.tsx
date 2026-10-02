@@ -18,7 +18,7 @@ import { ScreenHeader } from "@/components/common/screen-header";
 import { SectionHeading } from "@/components/settings/section-heading";
 import { PreferenceRow } from "@/components/settings/preference-row";
 import { CategoryIcon } from "@/components/ui/category-icon";
-import { CATEGORIES, CATEGORY_META, getCategoryStyle } from "@/constants/categories";
+import { getCategoryStyle } from "@/constants/categories";
 import { STORAGE_KEYS } from "@/constants/storage";
 import { useExpenses } from "@/lib/expense-store";
 import { useTheme } from "@/lib/theme-store";
@@ -63,7 +63,7 @@ export default function SettingsScreen() {
         if (val !== null) setBudgetNudges(val === "true");
       })
       .catch(() => undefined);
-  }, [account?.email]);
+  }, [account]);
 
   const toggleBudgetNudges = (value: boolean) => {
     Haptics.selectionAsync();
@@ -397,9 +397,9 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   panel: {
-    padding: 18,
-    marginBottom: 16,
-    borderRadius: 16,
+    padding: 20,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
   },
   accountRow: {
@@ -517,9 +517,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   backup: {
-    padding: 20,
-    marginBottom: 16,
-    borderRadius: 16,
+    padding: 22,
+    marginBottom: 18,
+    borderRadius: 20,
     borderWidth: 1,
   },
   backupIcon: {

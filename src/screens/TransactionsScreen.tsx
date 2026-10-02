@@ -55,9 +55,7 @@ export default function TransactionsScreen() {
   }, []);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Expense; index: number }) => {
-      const isFirst = index === 0;
-      const isLast = index === filtered.length - 1;
+    ({ item }: { item: Expense; index: number }) => {
       return (
         <View
           style={[
@@ -65,14 +63,7 @@ export default function TransactionsScreen() {
             {
               backgroundColor: colors.surface,
               borderColor: colors.border,
-              borderTopWidth: isFirst ? 1 : 0,
-              borderBottomWidth: 1,
-              borderLeftWidth: 1,
-              borderRightWidth: 1,
-              borderTopLeftRadius: isFirst ? 16 : 0,
-              borderTopRightRadius: isFirst ? 16 : 0,
-              borderBottomLeftRadius: isLast ? 16 : 0,
-              borderBottomRightRadius: isLast ? 16 : 0,
+              borderWidth: 1,
             },
           ]}
         >
@@ -84,7 +75,7 @@ export default function TransactionsScreen() {
         </View>
       );
     },
-    [colors.border, colors.surface, filtered.length, removeExpense]
+    [colors.border, colors.surface, removeExpense]
   );
 
   const keyExtractor = useCallback((item: Expense) => item.id, []);
@@ -228,7 +219,9 @@ const styles = StyleSheet.create({
     height: 14,
   },
   listItem: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
+    borderRadius: 18,
+    marginBottom: 10,
   },
   list: {
     marginTop: 14,
