@@ -1,0 +1,44 @@
+import { Alert, Share } from "react-native";
+import * as FileSystem from "@/native/file-system";
+import * as Sharing from "@/native/sharing";
+import { Expense } from "@/types/expense";
+import { requestStoragePermission } from "@/native/storage-permission";
+
+function escapeCsvField(value: string | number | undefined | null): string {
+  return `"${String(value ?? "").replace(/"/g, '""')}"`;
+}
+
+export function generateExpenseCsv(expenses: Expense[]): string {
+  const headers = ["Date", "Description", "Category", "Payment", "Amount"];
+  const rows = expenses.map((expense) =>
+    [expense.date, expense.description, expense.category, expense.payment, expense.amount]
+      .map(escapeCsvField)
+      .join(",")
+  );
+  return [headers.join(","), ...rows].join("\n");
+}
+
+export async function exportExpensesToCsv(expenses: Expense[]): Promise<boolean> {
+  if (!expenses.length) {
+    Alert.alert("Nothing to export", "Add at least one expense before creating an export backup.");
+    return false;
+  }
+  await requestStoragePermission();
+  const csv = generateExpenseCsv(expenses);
+  const filename = `ledgerly-export-${new Date().toISOString().slice(0, 10)}.csv`;
+  const baseDir = FileSystem.documentDirectory || FileSystem.cacheDirectory;
+  if (!baseDir) {
+    try { await Share.share({ message: csv, title: "Ledgerly Expense CSV" }); return true; }
+    catch { Alert.alert("Export failed", "The expense backup could not be shared."); return false; }
+  }
+  const uri = `${baseDir}${filename}`;
+  try {
+    await FileSystem.writeAsStringAsync(uri, csv, { encoding: FileSystem.EncodingType.UTF8 });
+    if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(uri, { mimeType: "text/csv", dialogTitle: "Export your expenses" });
+    else await Share.share({ message: csv, title: "Ledgerly Expense CSV" });
+    return true;
+  } catch {
+    Alert.alert("Export failed", "The expense backup could not be created.");
+    return false;
+  }
+}
