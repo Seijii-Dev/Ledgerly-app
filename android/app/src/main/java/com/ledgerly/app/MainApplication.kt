@@ -1,7 +1,7 @@
-package com.expensetrackernative
+package com.ledgerly.app
 
 import android.app.Application
-import expense.tracker.group6.BuildConfig
+import com.ledgerly.app.BuildConfig
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost

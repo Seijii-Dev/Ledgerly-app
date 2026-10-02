@@ -50,4 +50,4 @@ export const GOOGLE_WEB_CLIENT_ID = "your-web-client-id.apps.googleusercontent.c
 export const API_BASE_URL = "https://your-ledgerly-backend.vercel.app";
 ```
 
-The Google provider must also be enabled in Supabase Authentication. Configure a Web OAuth client ID and an Android OAuth client ID for package `expense.tracker.group6` using the SHA-1 fingerprint of the signing key. The Web client ID is used by `GoogleSignin.configure` and must match the client ID configured in Supabase.
+The Google provider must also be enabled in Supabase Authentication. Configure a Web OAuth client ID and an Android OAuth client ID for package `com.ledgerly.app` using the SHA-1 fingerprint of the signing key. The Web client ID is used by `GoogleSignin.configure` and must match the client ID configured in Supabase.

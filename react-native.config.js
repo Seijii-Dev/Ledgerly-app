@@ -1,7 +1,7 @@
 module.exports = {
   project: {
     android: {
-      packageName: 'expense.tracker.group6',
+      packageName: 'com.ledgerly.app',
     },
   },
 };
