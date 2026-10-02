@@ -1,9 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@/native/icons";
-import { LinearGradient } from "@/native/linear-gradient";
 import { Expense } from "@/types/expense";
-import { GlassSurface } from "@/components/ui/glass-surface";
 
 interface SpendingInsightProps {
   expenses: Expense[];
@@ -18,19 +16,12 @@ function getTopCategoryName(expenses: Expense[]): string {
   return top ? top[0] : "No spending yet";
 }
 
-export const SpendingInsight = React.memo(function SpendingInsight({ expenses }: SpendingInsightProps) {
+export function SpendingInsight({ expenses }: SpendingInsightProps) {
   const hasExpenses = expenses.length > 0;
-  const topName = React.useMemo(() => getTopCategoryName(expenses), [expenses]);
+  const topName = getTopCategoryName(expenses);
 
   return (
-    <GlassSurface radius={24} style={styles.wrap} contentStyle={styles.insight}>
-      <LinearGradient
-        pointerEvents="none"
-        colors={["#1B332F", "#172A2D"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
+    <View style={styles.insight}>
       <View style={styles.insightIcon}>
         <Ionicons name="sparkles" size={17} color="#FFFFFF" />
       </View>
@@ -41,18 +32,17 @@ export const SpendingInsight = React.memo(function SpendingInsight({ expenses }:
           ? `${topName} is currently your largest category this month.`
           : "Add your first expense to unlock spending insights and intelligent breakdowns."}
       </Text>
-    </GlassSurface>
+    </View>
   );
-});
+}
 
 const styles = StyleSheet.create({
-  wrap: {
-    marginBottom: 16,
-  },
   insight: {
     minHeight: 190,
     padding: 20,
-    overflow: "hidden",
+    marginBottom: 16,
+    borderRadius: 16,
+    backgroundColor: "#27453F",
   },
   insightIcon: {
     width: 34,
@@ -64,7 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EB6F61",
   },
   kickerLight: {
-    color: "#BCEAD9",
+    color: "#A4C8BA",
     fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1.4,
@@ -78,8 +68,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   insightCopy: {
-    color: "#D8ECE4",
-    fontSize: 12,
+    color: "#B8CEC5",
+    fontSize: 11,
     lineHeight: 18,
     marginTop: 8,
     maxWidth: 290,

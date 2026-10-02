@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 import * as Haptics from "@/native/haptics";
 import { Category } from "@/types/expense";
-import { useExpenses } from "@/lib/expense-store";
+import { CATEGORIES } from "@/constants/categories";
 import { useTheme } from "@/lib/theme-store";
 
 interface CategoryChipsProps {
@@ -10,18 +10,14 @@ interface CategoryChipsProps {
   onSelect: (category: "All" | Category) => void;
 }
 
+const ALL_CATEGORIES: ("All" | Category)[] = ["All", ...CATEGORIES];
+
 export function CategoryChips({ selected, onSelect }: CategoryChipsProps) {
   const { colors } = useTheme();
-  const { allCategories } = useExpenses();
-
-  const options: ("All" | Category)[] = useMemo(
-    () => ["All", ...allCategories],
-    [allCategories]
-  );
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-      {options.map((item) => {
+      {ALL_CATEGORIES.map((item) => {
         const isActive = selected === item;
         return (
           <Pressable
@@ -33,17 +29,14 @@ export function CategoryChips({ selected, onSelect }: CategoryChipsProps) {
             style={[
               styles.chip,
               { borderColor: colors.border, backgroundColor: colors.surface },
-              isActive && {
-                borderColor: colors.primary,
-                backgroundColor: colors.primarySoft,
-              },
+              isActive && styles.chipActive,
             ]}
           >
             <Text
               style={[
                 styles.chipText,
                 { color: colors.muted },
-                isActive && { color: colors.primary, fontWeight: "700" },
+                isActive && styles.chipTextActive,
               ]}
             >
               {item}
@@ -68,8 +61,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
+  chipActive: {
+    borderColor: "#F2B8B0",
+    backgroundColor: "#FFF0ED",
+  },
   chipText: {
     fontSize: 11,
     fontWeight: "500",
+  },
+  chipTextActive: {
+    color: "#EB6F61",
+    fontWeight: "700",
   },
 });

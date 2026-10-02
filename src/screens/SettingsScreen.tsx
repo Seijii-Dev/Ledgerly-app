@@ -17,39 +17,23 @@ import { ScreenContainer } from "@/components/screen-container";
 import { ScreenHeader } from "@/components/common/screen-header";
 import { SectionHeading } from "@/components/settings/section-heading";
 import { PreferenceRow } from "@/components/settings/preference-row";
-import { CategoryIcon } from "@/components/ui/category-icon";
-import { getCategoryStyle } from "@/constants/categories";
+import { CATEGORIES, CATEGORY_META } from "@/constants/categories";
 import { STORAGE_KEYS } from "@/constants/storage";
 import { useExpenses } from "@/lib/expense-store";
 import { useTheme } from "@/lib/theme-store";
 import { useAuth } from "@/lib/auth-store";
 import { formatMoney } from "@/utils/formatters";
 import { exportExpensesToCsv } from "@/utils/export-csv";
-import { StoragePermissionDialog } from "@/components/common/storage-permission-dialog";
-import { CustomCategoryModal } from "@/components/settings/custom-category-modal";
 
 const BUDGET_PRESETS = [3000, 5000, 10000, 15000, 20000] as const;
 
 export default function SettingsScreen() {
-  const {
-    budget,
-    setBudget,
-    expenses,
-    syncing,
-    syncError,
-    refreshExpenses,
-    customCategories,
-    allCategories,
-    addCustomCategory,
-    deleteCustomCategory,
-  } = useExpenses();
+  const { budget, setBudget, expenses, syncing, syncError, refreshExpenses } = useExpenses();
   const { dark, setDark, colors } = useTheme();
   const { account, logout } = useAuth();
 
   const [budgetText, setBudgetText] = useState(String(budget));
   const [budgetNudges, setBudgetNudges] = useState(true);
-  const [showStorageDialog, setShowStorageDialog] = useState(false);
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
   useEffect(() => {
     setBudgetText(String(budget));
@@ -200,17 +184,14 @@ export default function SettingsScreen() {
                   style={[
                     styles.presetBtn,
                     { borderColor: colors.border, backgroundColor: colors.surfaceSubtle },
-                    active && {
-                      borderColor: colors.primary,
-                      backgroundColor: colors.primarySoft,
-                    },
+                    active && styles.presetBtnActive,
                   ]}
                 >
                   <Text
                     style={[
                       styles.presetBtnText,
                       { color: colors.muted },
-                      active && { color: colors.primary, fontWeight: "700" },
+                      active && styles.presetBtnTextActive,
                     ]}
                   >
                     {formatMoney(preset)}
@@ -225,56 +206,15 @@ export default function SettingsScreen() {
           <SectionHeading
             icon={<Ionicons name="pricetag-outline" size={17} color={colors.primary} />}
             title="Active Categories"
-            copy={`${allCategories.length} categories active across your records.`}
+            copy={`${CATEGORIES.length} standardized categories keep your records tidy.`}
           />
           <View style={styles.pills}>
-            {allCategories.map((category) => {
-              const catStyle = getCategoryStyle(category, customCategories);
-              const isCustom = customCategories.some(
-                (c) => c.name.toLowerCase() === category.toLowerCase()
-              );
-              return (
-                <Pressable
-                  key={category}
-                  onPress={() => {
-                    if (isCustom) {
-                      Alert.alert(
-                        "Custom Category",
-                        `"${category}" is a custom category. Do you want to remove it?`,
-                        [
-                          { text: "Cancel", style: "cancel" },
-                          {
-                            text: "Delete category",
-                            style: "destructive",
-                            onPress: () => {
-                              deleteCustomCategory(category);
-                              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-                            },
-                          },
-                        ]
-                      );
-                    }
-                  }}
-                  style={[
-                    styles.pill,
-                    {
-                      backgroundColor: dark ? `${catStyle.color}25` : catStyle.soft,
-                    },
-                  ]}
-                >
-                  <CategoryIcon category={category} size={15} customCategories={customCategories} />
-                  <Text style={[styles.pillText, { color: catStyle.color }]}>{category}</Text>
-                  {isCustom && (
-                    <Ionicons
-                      name="close-circle"
-                      size={13}
-                      color={catStyle.color}
-                      style={{ opacity: 0.65, marginLeft: 2 }}
-                    />
-                  )}
-                </Pressable>
-              );
-            })}
+            {CATEGORIES.map((category) => (
+              <View key={category} style={[styles.pill, { backgroundColor: CATEGORY_META[category].soft }]}>
+                <View style={[styles.pillDot, { backgroundColor: CATEGORY_META[category].color }]} />
+                <Text style={[styles.pillText, { color: CATEGORY_META[category].color }]}>{category}</Text>
+              </View>
+            ))}
           </View>
           <Pressable
             style={({ pressed }) => [
@@ -282,10 +222,12 @@ export default function SettingsScreen() {
               { borderColor: colors.border },
               pressed && styles.pressed,
             ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setShowCategoryModal(true);
-            }}
+            onPress={() =>
+              Alert.alert(
+                "Custom Categories",
+                "Custom categories are in development. Your standard categories are currently active and synced."
+              )
+            }
           >
             <Ionicons name="add" size={15} color={colors.primary} />
             <Text style={[styles.outlineText, { color: colors.primary }]}>Add custom category</Text>
@@ -337,39 +279,8 @@ export default function SettingsScreen() {
             <Ionicons name="download-outline" size={16} color="#FFFFFF" />
             <Text style={styles.exportText}>Export as CSV</Text>
           </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.outlineButton,
-              { borderColor: colors.border, marginTop: 12, alignSelf: "stretch", justifyContent: "center" },
-              pressed && styles.pressed,
-            ]}
-            onPress={() => {
-              Haptics.selectionAsync();
-              setShowStorageDialog(true);
-            }}
-          >
-            <Ionicons name="shield-checkmark-outline" size={15} color={colors.primary} />
-            <Text style={[styles.outlineText, { color: colors.primary }]}>
-              Storage Permission Details
-            </Text>
-          </Pressable>
         </View>
       </ScrollView>
-
-      {/* Storage Permission Dialog */}
-      <StoragePermissionDialog
-        visible={showStorageDialog}
-        onClose={() => setShowStorageDialog(false)}
-      />
-
-      {/* Custom Category Modal */}
-      <CustomCategoryModal
-        visible={showCategoryModal}
-        onClose={() => setShowCategoryModal(false)}
-        onSave={addCustomCategory}
-        existingCategories={allCategories}
-      />
     </ScreenContainer>
   );
 }
@@ -397,9 +308,9 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   panel: {
-    padding: 20,
-    marginBottom: 18,
-    borderRadius: 20,
+    padding: 18,
+    marginBottom: 16,
+    borderRadius: 16,
     borderWidth: 1,
   },
   accountRow: {
@@ -471,9 +382,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
+  presetBtnActive: {
+    borderColor: "#F2B8B0",
+    backgroundColor: "#FFF0ED",
+  },
   presetBtnText: {
     fontSize: 10,
     fontWeight: "600",
+  },
+  presetBtnTextActive: {
+    color: "#EB6F61",
+    fontWeight: "700",
   },
   divider: {
     height: 1,
@@ -517,9 +436,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   backup: {
-    padding: 22,
-    marginBottom: 18,
-    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+    borderRadius: 16,
     borderWidth: 1,
   },
   backupIcon: {

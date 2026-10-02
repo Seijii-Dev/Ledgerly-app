@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { Expense } from "@/types/expense";
-import { getCategoryStyle } from "@/constants/categories";
+import { CATEGORIES, CATEGORY_META } from "@/constants/categories";
 import { useTheme } from "@/lib/theme-store";
 import { formatMoney } from "@/utils/formatters";
 
@@ -11,21 +11,15 @@ interface DonutChartProps {
   expenses: Expense[];
 }
 
-export const DonutChart = React.memo(function DonutChart({ total, expenses }: DonutChartProps) {
+export function DonutChart({ total, expenses }: DonutChartProps) {
   const { colors } = useTheme();
 
-  const totals = React.useMemo(() => {
-    const map = new Map<string, number>();
-    for (const exp of expenses) {
-      if (exp.category) {
-        map.set(exp.category, (map.get(exp.category) || 0) + (exp.amount || 0));
-      }
-    }
-    return Array.from(map.entries())
-      .map(([category, total]) => ({ category, total }))
-      .filter((item) => item.total > 0)
-      .sort((a, b) => b.total - a.total);
-  }, [expenses]);
+  const totals = CATEGORIES.map((category) => ({
+    category,
+    total: expenses
+      .filter((expense) => expense.category === category)
+      .reduce((sum, expense) => sum + (expense.amount || 0), 0),
+  })).filter((item) => item.total > 0);
 
   const radius = 55;
   const circumference = 2 * Math.PI * radius;
@@ -43,7 +37,7 @@ export const DonutChart = React.memo(function DonutChart({ total, expenses }: Do
               cx="67.5"
               cy="67.5"
               r={radius}
-              stroke={getCategoryStyle(category).color || colors.primary}
+              stroke={CATEGORY_META[category].color}
               strokeWidth="24"
               fill="none"
               strokeDasharray={[length, Math.max(0, circumference - length)]}
@@ -61,7 +55,7 @@ export const DonutChart = React.memo(function DonutChart({ total, expenses }: Do
       </View>
     </View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   donutWrap: {

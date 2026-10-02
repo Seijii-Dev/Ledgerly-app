@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -13,11 +14,9 @@ import * as Haptics from "@/native/haptics";
 import { ScreenContainer } from "@/components/screen-container";
 import { ScreenHeader } from "@/components/common/screen-header";
 import { ConfirmDialog } from "@/components/common/confirm-dialog";
-import { AboutDialog } from "@/components/common/about-dialog";
 import { ProfileCard } from "@/components/account/profile-card";
 import { StatCard } from "@/components/account/stat-card";
 import { AccountRow } from "@/components/account/account-row";
-import { AccountSkeleton } from "@/components/ui/account-skeleton";
 import { useAuth } from "@/lib/auth-store";
 import { useExpenses } from "@/lib/expense-store";
 import { useTheme } from "@/lib/theme-store";
@@ -25,10 +24,9 @@ import { formatMoney } from "@/utils/formatters";
 
 export default function AccountScreen() {
   const { account, logout } = useAuth();
-  const { expenses, budget, syncing, syncError, refreshExpenses, hydrated } = useExpenses();
+  const { expenses, budget, syncing, syncError, refreshExpenses } = useExpenses();
   const { colors } = useTheme();
   const [showSignOut, setShowSignOut] = useState(false);
-  const [showAboutModal, setShowAboutModal] = useState(false);
 
   const totalTracked = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
 
@@ -40,16 +38,11 @@ export default function AccountScreen() {
 
   const showAbout = () => {
     Haptics.selectionAsync();
-    setShowAboutModal(true);
-  };
-
-  if (!hydrated) {
-    return (
-      <ScreenContainer>
-        <AccountSkeleton />
-      </ScreenContainer>
+    Alert.alert(
+      "About Ledgerly",
+      "Ledgerly — Smart Spending and Savings Tracker v1.0.0\n\nBuilt for calm, deliberate money management with seamless cloud sync and instant offline access.\n\nDeveloped by Group 6."
     );
-  }
+  };
 
   return (
     <ScreenContainer>
@@ -136,12 +129,6 @@ export default function AccountScreen() {
         onCancel={() => setShowSignOut(false)}
         destructive
       />
-
-      {/* About Ledgerly Modal */}
-      <AboutDialog
-        visible={showAboutModal}
-        onClose={() => setShowAboutModal(false)}
-      />
     </ScreenContainer>
   );
 }
@@ -154,13 +141,13 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: "row",
     gap: 8,
-    marginBottom: 18,
+    marginBottom: 16,
   },
   panel: {
-    padding: 20,
-    borderRadius: 20,
+    padding: 18,
+    borderRadius: 16,
     borderWidth: 1,
-    marginBottom: 18,
+    marginBottom: 16,
   },
   sectionKicker: {
     fontSize: 9,
@@ -169,8 +156,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   signOutButton: {
-    height: 52,
-    borderRadius: 16,
+    height: 48,
+    borderRadius: 12,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",

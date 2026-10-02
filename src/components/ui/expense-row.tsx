@@ -2,9 +2,8 @@ import React from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@/native/icons";
 import * as Haptics from "@/native/haptics";
-import { CategoryIcon } from "@/components/ui/category-icon";
 import { Expense } from "@/types/expense";
-import { getCategoryStyle } from "@/constants/categories";
+import { CATEGORY_META, DEFAULT_CATEGORY_STYLE } from "@/constants/categories";
 import { useTheme } from "@/lib/theme-store";
 import { formatDate, formatMoney } from "@/utils/formatters";
 
@@ -16,17 +15,11 @@ interface ExpenseRowProps {
   showActions?: boolean;
 }
 
-export const ExpenseRow = React.memo(function ExpenseRow({
-  expense,
-  onPress,
-  onEdit,
-  onDelete,
-  showActions = true,
-}: ExpenseRowProps) {
+export function ExpenseRow({ expense, onPress, onEdit, onDelete, showActions = true }: ExpenseRowProps) {
   const { colors, dark } = useTheme();
-  const meta = getCategoryStyle(expense.category);
+  const meta = CATEGORY_META[expense.category] || DEFAULT_CATEGORY_STYLE;
 
-  const handleDelete = React.useCallback(() => {
+  const handleDelete = () => {
     Alert.alert("Delete Expense", `Remove "${expense.description}" from your ledger?`, [
       { text: "Cancel", style: "cancel" },
       {
@@ -38,7 +31,7 @@ export const ExpenseRow = React.memo(function ExpenseRow({
         },
       },
     ]);
-  }, [expense.description, onDelete]);
+  };
 
   return (
     <View style={[styles.row, { borderBottomColor: colors.border }]}>
@@ -50,15 +43,10 @@ export const ExpenseRow = React.memo(function ExpenseRow({
           },
         ]}
       >
-        <CategoryIcon category={expense.category} size={22} />
+        <Ionicons name="card-outline" size={16} color={meta.color} />
       </View>
 
-      <Pressable
-        style={styles.body}
-        onPress={onPress || onEdit}
-        accessibilityRole="button"
-        accessibilityLabel={`${expense.description}, ${formatMoney(expense.amount)}, ${expense.category}, ${formatDate(expense.date)}`}
-      >
+      <Pressable style={styles.body} onPress={onPress || onEdit}>
         <Text style={[styles.title, { color: colors.foreground }]} numberOfLines={1}>
           {expense.description}
         </Text>
@@ -82,8 +70,6 @@ export const ExpenseRow = React.memo(function ExpenseRow({
                   Haptics.selectionAsync();
                   onEdit();
                 }}
-                accessibilityRole="button"
-                accessibilityLabel={`Edit ${expense.description}`}
                 style={({ pressed }) => [styles.actionButton, pressed && styles.actionPressed]}
               >
                 <Ionicons name="create-outline" size={15} color={colors.muted} />
@@ -93,8 +79,6 @@ export const ExpenseRow = React.memo(function ExpenseRow({
               <Pressable
                 hitSlop={8}
                 onPress={handleDelete}
-                accessibilityRole="button"
-                accessibilityLabel={`Delete ${expense.description}`}
                 style={({ pressed }) => [styles.actionButton, pressed && styles.actionPressed]}
               >
                 <Ionicons name="trash-outline" size={15} color={colors.subtle} />
@@ -105,7 +89,7 @@ export const ExpenseRow = React.memo(function ExpenseRow({
       </View>
     </View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   row: {

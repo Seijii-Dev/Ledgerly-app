@@ -6,7 +6,7 @@ import { useTheme } from "@/lib/theme-store";
 interface StatCardProps {
   label: string;
   value: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
 }
 
 export function StatCard({ label, value, icon }: StatCardProps) {

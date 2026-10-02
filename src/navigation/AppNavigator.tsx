@@ -31,28 +31,11 @@ function MainTabs() {
     headerShown: false,
     tabBarActiveTintColor: colors.primary,
     tabBarInactiveTintColor: colors.muted,
-    tabBarStyle: {
-      position: 'absolute',
-      left: 14,
-      right: 14,
-      bottom: 12,
-      height: 70,
-      paddingBottom: 8,
-      paddingTop: 8,
-      borderTopWidth: 0,
-      borderRadius: 24,
-      backgroundColor: colors.surface,
-      shadowColor: '#10221F',
-      shadowOpacity: colors.background === '#081016' ? 0.35 : 0.12,
-      shadowRadius: 18,
-      shadowOffset: { width: 0, height: 8 },
-      elevation: 8,
-    },
-    tabBarItemStyle: { borderRadius: 18 },
-    tabBarLabelStyle: { fontSize: 10, fontWeight: '700', marginTop: 1 },
+    tabBarStyle: { height: 82, paddingTop: 10, paddingBottom: 8, borderTopColor: colors.border, backgroundColor: colors.surface },
+    tabBarLabelStyle: { fontSize: 10, fontWeight: '600', marginBottom: 3 },
     tabBarIcon: ({ color, focused }) => {
       const item = screens.find(([name]) => name === route.name);
-      return <View style={[styles.iconWrap, focused && { backgroundColor: colors.primarySoft }]}><Ionicons name={(focused ? item?.[3] : item?.[2]) as any} color={color} size={20} /></View>;
+      return <View style={styles.iconWrap}><Ionicons name={(focused ? item?.[3] : item?.[2]) as any} color={color} size={22} /></View>;
     },
   })}>{screens.map(([name, component]) => <Tabs.Screen key={name} name={name} component={component} />)}</Tabs.Navigator>;
 }
@@ -62,4 +45,4 @@ export default function AppNavigator() {
   if (loading) return null;
   return <NavigationContainer ref={navigationRef}><Stack.Navigator screenOptions={{ headerShown: false }}>{account ? <Stack.Screen name="Main" component={MainTabs} /> : <Stack.Screen name="Auth" component={AuthScreen} />}</Stack.Navigator></NavigationContainer>;
 }
-const styles = StyleSheet.create({ iconWrap: { height: 30, minWidth: 42, paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 15 } });
+const styles = StyleSheet.create({ iconWrap: { height: 28, paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 14 } });

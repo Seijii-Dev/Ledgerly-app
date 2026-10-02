@@ -14,14 +14,9 @@ import {
 import { Ionicons } from "@/native/icons";
 import * as Haptics from "@/native/haptics";
 import { Category, Expense, NewExpenseData, Payment } from "@/types/expense";
-import { getCategoryStyle, PAYMENT_METHODS } from "@/constants/categories";
+import { CATEGORIES, CATEGORY_META, PAYMENT_METHODS } from "@/constants/categories";
 import { getPhilippinesDate, getYesterdayDate, normalizeDate } from "@/utils/date";
 import { useTheme } from "@/lib/theme-store";
-import { useExpenses } from "@/lib/expense-store";
-import { GlassSurface } from "@/components/ui/glass-surface";
-import { CategoryIcon } from "@/components/ui/category-icon";
-import { PaymentIcon } from "@/components/ui/payment-icon";
-import { CustomCategoryModal } from "@/components/settings/custom-category-modal";
 
 interface ExpenseModalProps {
   visible: boolean;
@@ -32,7 +27,6 @@ interface ExpenseModalProps {
 
 export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: ExpenseModalProps) {
   const { colors, dark } = useTheme();
-  const { allCategories, customCategories, addCustomCategory } = useExpenses();
 
   const isEditing = Boolean(initialExpense);
 
@@ -41,7 +35,6 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
   const [category, setCategory] = useState<Category>("Food");
   const [payment, setPayment] = useState<Payment>("Cash");
   const [date, setDate] = useState(getPhilippinesDate());
-  const [showAddCustomModal, setShowAddCustomModal] = useState(false);
 
   // Reset or initialize values when modal opens
   useEffect(() => {
@@ -94,11 +87,7 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
         style={styles.backdrop}
       >
         <Pressable style={styles.dismissOverlay} onPress={onClose} />
-        <GlassSurface
-          variant="sheet"
-          radius={28}
-          contentStyle={[styles.card, { backgroundColor: colors.card }]}
-        >
+        <View style={[styles.card, { backgroundColor: colors.surface }]}>
           {/* Header */}
           <View style={styles.header}>
             <View>
@@ -113,8 +102,6 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
             <Pressable
               hitSlop={10}
               onPress={onClose}
-              accessibilityRole="button"
-              accessibilityLabel="Close expense modal"
               style={[styles.closeBtn, { backgroundColor: colors.surfaceSubtle }]}
             >
               <Ionicons name="close" size={18} color={colors.muted} />
@@ -128,8 +115,8 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
               style={[
                 styles.amountWrap,
                 {
-                  backgroundColor: dark ? "rgba(255,255,255,0.06)" : "#FFF9F8",
-                  borderColor: dark ? colors.border : "#F4CCC5",
+                  backgroundColor: dark ? colors.surfaceSubtle : "#FFFAF9",
+                  borderColor: dark ? colors.border : "#F2B8B0",
                 },
               ]}
             >
@@ -154,11 +141,7 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
               placeholderTextColor={colors.subtle}
               style={[
                 styles.input,
-                {
-                  backgroundColor: dark ? "rgba(255,255,255,0.06)" : "#F6FAFC",
-                  borderColor: colors.border,
-                  color: colors.foreground,
-                },
+                { backgroundColor: colors.surface, borderColor: colors.border, color: colors.foreground },
               ]}
             />
 
@@ -169,11 +152,8 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                 onPress={() => setDate(today)}
                 style={[
                   styles.presetChip,
-                  { borderColor: colors.border, backgroundColor: dark ? "rgba(255,255,255,0.06)" : "#F6FAFC" },
-                  date === today && {
-                    borderColor: colors.primary,
-                    backgroundColor: colors.primarySoft,
-                  },
+                  { borderColor: colors.border, backgroundColor: colors.surface },
+                  date === today && styles.presetActive,
                 ]}
               >
                 <Ionicons
@@ -185,7 +165,7 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                   style={[
                     styles.presetText,
                     { color: colors.muted },
-                    date === today && { color: colors.primary, fontWeight: "700" },
+                    date === today && styles.presetTextActive,
                   ]}
                 >
                   Today
@@ -196,11 +176,8 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                 onPress={() => setDate(yesterday)}
                 style={[
                   styles.presetChip,
-                  { borderColor: colors.border, backgroundColor: dark ? "rgba(255,255,255,0.06)" : "#F6FAFC" },
-                  date === yesterday && {
-                    borderColor: colors.primary,
-                    backgroundColor: colors.primarySoft,
-                  },
+                  { borderColor: colors.border, backgroundColor: colors.surface },
+                  date === yesterday && styles.presetActive,
                 ]}
               >
                 <Ionicons
@@ -212,7 +189,7 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                   style={[
                     styles.presetText,
                     { color: colors.muted },
-                    date === yesterday && { color: colors.primary, fontWeight: "700" },
+                    date === yesterday && styles.presetTextActive,
                   ]}
                 >
                   Yesterday
@@ -223,8 +200,8 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
             {/* Category selection */}
             <Text style={[styles.label, { color: colors.subtle }]}>CATEGORY</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-              {allCategories.map((item) => {
-                const meta = getCategoryStyle(item, customCategories);
+              {CATEGORIES.map((item) => {
+                const meta = CATEGORY_META[item];
                 const active = category === item;
                 return (
                   <Pressable
@@ -235,14 +212,14 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                     }}
                     style={[
                       styles.chip,
-                      { borderColor: colors.border, backgroundColor: dark ? "rgba(255,255,255,0.06)" : "#F6FAFC" },
+                      { borderColor: colors.border, backgroundColor: colors.surface },
                       active && {
                         backgroundColor: dark ? `${meta.color}25` : meta.soft,
                         borderColor: meta.color,
                       },
                     ]}
                   >
-                    <CategoryIcon category={item} size={16} customCategories={customCategories} />
+                    <View style={[styles.dot, { backgroundColor: meta.color }]} />
                     <Text
                       style={[
                         styles.chipText,
@@ -255,23 +232,6 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                   </Pressable>
                 );
               })}
-              <Pressable
-                onPress={() => {
-                  Haptics.selectionAsync();
-                  setShowAddCustomModal(true);
-                }}
-                style={[
-                  styles.chip,
-                  {
-                    borderColor: colors.border,
-                    borderStyle: "dashed",
-                    backgroundColor: dark ? "rgba(255,255,255,0.04)" : "#FAFCFB",
-                  },
-                ]}
-              >
-                <Ionicons name="add" size={15} color={colors.primary} />
-                <Text style={[styles.chipText, { color: colors.primary, fontWeight: "600" }]}>Add</Text>
-              </Pressable>
             </ScrollView>
 
             {/* Payment method selection */}
@@ -288,19 +248,15 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
                     }}
                     style={[
                       styles.chip,
-                      { borderColor: colors.border, backgroundColor: dark ? "rgba(255,255,255,0.06)" : "#F6FAFC" },
-                      active && {
-                        borderColor: colors.primary,
-                        backgroundColor: colors.primarySoft,
-                      },
+                      { borderColor: colors.border, backgroundColor: colors.surface },
+                      active && styles.paymentActive,
                     ]}
                   >
-                    <PaymentIcon payment={item} size={16} color={active ? colors.primary : colors.muted} />
                     <Text
                       style={[
                         styles.chipText,
                         { color: colors.muted },
-                        active && { color: colors.primary, fontWeight: "700" },
+                        active && styles.paymentTextActive,
                       ]}
                     >
                       {item}
@@ -319,22 +275,8 @@ export function ExpenseModal({ visible, initialExpense, onClose, onSubmit }: Exp
               <Ionicons name={isEditing ? "checkmark" : "arrow-up"} size={17} color="#FFFFFF" />
             </Pressable>
           </ScrollView>
-        </GlassSurface>
+        </View>
       </KeyboardAvoidingView>
-
-      {/* Inline Custom Category Creator */}
-      <CustomCategoryModal
-        visible={showAddCustomModal}
-        onClose={() => setShowAddCustomModal(false)}
-        onSave={async (cat) => {
-          const success = await addCustomCategory(cat);
-          if (success) {
-            setCategory(cat.name);
-          }
-          return success;
-        }}
-        existingCategories={allCategories}
-      />
     </Modal>
   );
 }
@@ -352,6 +294,13 @@ const styles = StyleSheet.create({
     maxHeight: "88%",
     padding: 22,
     paddingBottom: Platform.OS === "ios" ? 38 : 28,
+    borderTopLeftRadius: 26,
+    borderTopRightRadius: 26,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: -6 },
+    elevation: 8,
   },
   header: {
     flexDirection: "row",
@@ -428,9 +377,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
+  presetActive: {
+    borderColor: "#F2B8B0",
+    backgroundColor: "#FFF0ED",
+  },
   presetText: {
     fontSize: 11,
     fontWeight: "600",
+  },
+  presetTextActive: {
+    color: "#EB6F61",
+    fontWeight: "700",
   },
   chipRow: {
     flexDirection: "row",
@@ -445,9 +402,22 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     borderWidth: 1,
   },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
   chipText: {
     fontSize: 11,
     fontWeight: "600",
+  },
+  paymentActive: {
+    borderColor: "#F2B8B0",
+    backgroundColor: "#FFF0ED",
+  },
+  paymentTextActive: {
+    color: "#EB6F61",
+    fontWeight: "700",
   },
   submitBtn: {
     flexDirection: "row",

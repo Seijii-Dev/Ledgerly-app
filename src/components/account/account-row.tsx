@@ -4,7 +4,7 @@ import { Ionicons } from "@/native/icons";
 import { useTheme } from "@/lib/theme-store";
 
 interface AccountRowProps {
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   title: string;
   copy: string;
   onPress: () => void;

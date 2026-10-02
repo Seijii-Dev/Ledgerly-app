@@ -32,24 +32,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingTop: 10,
-    marginBottom: 20,
+    paddingTop: 8,
+    marginBottom: 16,
   },
   titleArea: {
     flex: 1,
     paddingRight: 10,
   },
   kicker: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1.4,
   },
   title: {
     fontFamily: "Fraunces_700Bold",
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: "700",
     letterSpacing: -1.2,
-    marginTop: 5,
+    marginTop: 6,
   },
   dot: {
     fontWeight: "700",
@@ -57,8 +57,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 12,
     lineHeight: 18,
-    marginTop: 6,
-    maxWidth: 300,
+    marginTop: 4,
   },
   rightAction: {
     alignItems: "center",

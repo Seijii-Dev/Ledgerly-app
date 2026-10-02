@@ -2,10 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@/native/icons";
 import { EmptyState } from "@/components/ui/empty-state";
-import { CategoryIcon } from "@/components/ui/category-icon";
-import { getCategoryStyle } from "@/constants/categories";
+import { CATEGORY_META } from "@/constants/categories";
 import { CategoryTotal } from "@/hooks/useReportMetrics";
-import { CustomCategory } from "@/types/expense";
 import { useTheme } from "@/lib/theme-store";
 import { formatMoney, formatPercent } from "@/utils/formatters";
 
@@ -14,7 +12,6 @@ interface CategoryBreakdownProps {
   monthTotal: number;
   maxCategorySpend: number;
   activeCount: number;
-  customCategories?: CustomCategory[];
 }
 
 export function CategoryBreakdown({
@@ -22,7 +19,6 @@ export function CategoryBreakdown({
   monthTotal,
   maxCategorySpend,
   activeCount,
-  customCategories,
 }: CategoryBreakdownProps) {
   const { colors } = useTheme();
 
@@ -45,12 +41,12 @@ export function CategoryBreakdown({
       ) : (
         <View style={styles.bars}>
           {categoryTotals.map(({ category, total }) => {
-            const meta = getCategoryStyle(category, customCategories);
+            const meta = CATEGORY_META[category];
             return (
               <View key={category} style={styles.barRow}>
                 <View style={styles.barLabels}>
                   <View style={styles.labelLeft}>
-                    <CategoryIcon category={category} size={18} customCategories={customCategories} />
+                    <View style={[styles.dotMark, { backgroundColor: meta.color }]} />
                     <Text style={[styles.categoryLabel, { color: colors.foreground }]}>{category}</Text>
                     <Text style={[styles.categoryPct, { color: colors.subtle }]}>
                       ({formatPercent(total, monthTotal)})

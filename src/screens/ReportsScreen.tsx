@@ -10,10 +10,9 @@ import { useExpenses } from "@/lib/expense-store";
 import { useTheme } from "@/lib/theme-store";
 import { formatMoney, formatPercent } from "@/utils/formatters";
 import { useReportMetrics } from "@/hooks/useReportMetrics";
-import { ReportsSkeleton } from "@/components/ui/reports-skeleton";
 
 export default function ReportsScreen() {
-  const { expenses, refreshExpenses, syncing, hydrated, allCategories, customCategories } = useExpenses();
+  const { expenses, refreshExpenses, syncing } = useExpenses();
   const { colors } = useTheme();
 
   const {
@@ -24,19 +23,11 @@ export default function ReportsScreen() {
     activeCategoryCount,
     maxCategorySpend,
     topCategory,
-  } = useReportMetrics(expenses, allCategories);
+  } = useReportMetrics(expenses);
 
   const averageExpenseSize = monthExpenses.length
     ? formatMoney(monthTotal / monthExpenses.length)
     : "₱0";
-
-  if (!hydrated) {
-    return (
-      <ScreenContainer>
-        <ReportsSkeleton />
-      </ScreenContainer>
-    );
-  }
 
   return (
     <ScreenContainer>
@@ -83,7 +74,6 @@ export default function ReportsScreen() {
           monthTotal={monthTotal}
           maxCategorySpend={maxCategorySpend}
           activeCount={activeCategoryCount}
-          customCategories={customCategories}
         />
 
         {/* Payment Methods Panel */}
@@ -156,11 +146,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    minHeight: 152,
-    paddingHorizontal: 22,
-    marginTop: 4,
-    marginBottom: 18,
-    borderRadius: 22,
+    minHeight: 160,
+    paddingHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 16,
+    borderRadius: 18,
     backgroundColor: "#2A4740",
   },
   heroValue: {
@@ -203,9 +193,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   panel: {
-    padding: 20,
-    marginBottom: 18,
-    borderRadius: 20,
+    padding: 18,
+    marginBottom: 16,
+    borderRadius: 16,
     borderWidth: 1,
   },
   panelHeader: {

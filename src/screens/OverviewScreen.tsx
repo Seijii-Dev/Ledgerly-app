@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
+  Alert,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -9,7 +10,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@/native/icons";
 import { ScreenContainer } from "@/components/screen-container";
-import { GlassSurface } from "@/components/ui/glass-surface";
 import { MetricCard } from "@/components/ui/metric-card";
 import { ExpenseRow } from "@/components/ui/expense-row";
 import { ExpenseModal } from "@/components/expense-modal";
@@ -17,14 +17,11 @@ import { DonutChart } from "@/components/overview/donut-chart";
 import { CategoryLegend } from "@/components/overview/category-legend";
 import { DailyRhythm } from "@/components/overview/daily-rhythm";
 import { SpendingInsight } from "@/components/overview/spending-insight";
-import { Expense, NewExpenseData } from "@/types/expense";
-import { PulseDialog } from "@/components/common/pulse-dialog";
-import * as Haptics from "@/native/haptics";
+import { Expense } from "@/types/expense";
 import { useExpenses } from "@/lib/expense-store";
 import { useAuth } from "@/lib/auth-store";
 import { useTheme } from "@/lib/theme-store";
 import { formatMoney } from "@/utils/formatters";
-import { DashboardSkeleton } from "@/components/ui/dashboard-skeleton";
 import {
   getFormattedMonthHeader,
   getFormattedTodayHeader,
@@ -53,7 +50,6 @@ export default function OverviewScreen() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
-  const [showPulseModal, setShowPulseModal] = useState(false);
 
   const greeting = getTimeGreeting();
   const todayLabel = getFormattedTodayHeader();
@@ -65,8 +61,6 @@ export default function OverviewScreen() {
     [sortedExpenses, currentMonth]
   );
 
-  const recentExpenses = useMemo(() => sortedExpenses.slice(0, 5), [sortedExpenses]);
-
   const topCategorySummary = useMemo(() => {
     const totals = monthExpenses.reduce<Record<string, number>>(
       (map, exp) => ({ ...map, [exp.category]: (map[exp.category] || 0) + (exp.amount || 0) }),
@@ -77,35 +71,33 @@ export default function OverviewScreen() {
     return `${top[0]}  ${formatMoney(top[1])}`;
   }, [monthExpenses]);
 
-  const showPulseAlert = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setShowPulseModal(true);
-  }, []);
-
-  const handleClosePulse = useCallback(() => {
-    setShowPulseModal(false);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setShowAddModal(false);
-    setEditingExpense(null);
-  }, []);
-
-  const handleModalSubmit = useCallback(
-    (data: NewExpenseData) => {
-      if (editingExpense) {
-        updateExpense(editingExpense.id, data);
-      } else {
-        addExpense(data);
-      }
-    },
-    [editingExpense, updateExpense, addExpense]
-  );
+  const showPulseAlert = () => {
+    if (budgetPercent >= 100) {
+      Alert.alert(
+        "Budget Limit Reached",
+        `You have used ${budgetPercent}% of your monthly budget of ${formatMoney(budget)} (Spent: ${formatMoney(monthTotal)}).`
+      );
+    } else if (budgetPercent >= 80) {
+      Alert.alert(
+        "Approaching Budget",
+        `You've used ${budgetPercent}% of your monthly budget. Remaining balance is ${formatMoney(remaining)}.`
+      );
+    } else {
+      Alert.alert(
+        "Spending Pulse",
+        `Looking good! You've used ${budgetPercent}% of your ${formatMoney(budget)} budget with ${formatMoney(remaining)} remaining.`
+      );
+    }
+  };
 
   if (!hydrated) {
     return (
       <ScreenContainer>
-        <DashboardSkeleton />
+        <View style={styles.loadingState}>
+          <Ionicons name="sync-outline" size={26} color={colors.primary} />
+          <Text style={[styles.loadingTitle, { color: colors.foreground }]}>Loading your ledger</Text>
+          <Text style={[styles.loadingCopy, { color: colors.muted }]}>Restoring your saved expenses…</Text>
+        </View>
       </ScreenContainer>
     );
   }
@@ -136,20 +128,21 @@ export default function OverviewScreen() {
             </Text>
             <Text style={[styles.subtitle, { color: colors.muted }]}>Here’s your financial pulse for today.</Text>
           </View>
-          <Pressable onPress={showPulseAlert}>
-            <GlassSurface variant="pill" radius={14} contentStyle={styles.bell}>
-              <Ionicons name="notifications-outline" size={20} color={colors.muted} />
-              <View style={[styles.notificationDot, { backgroundColor: colors.primary }]} />
-            </GlassSurface>
+          <Pressable
+            style={[styles.bell, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            onPress={showPulseAlert}
+          >
+            <Ionicons name="notifications-outline" size={20} color={colors.muted} />
+            <View style={[styles.notificationDot, { backgroundColor: colors.primary }]} />
           </Pressable>
         </View>
 
         {/* Action Row */}
         <View style={styles.actionRow}>
-          <GlassSurface variant="pill" radius={14} contentStyle={styles.monthPill}>
+          <View style={[styles.monthPill, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Ionicons name="calendar-outline" size={15} color={colors.primary} />
             <Text style={[styles.monthText, { color: colors.foreground }]}>{monthLabel}</Text>
-          </GlassSurface>
+          </View>
           <Pressable
             style={({ pressed }) => [
               styles.addButton,
@@ -190,7 +183,7 @@ export default function OverviewScreen() {
         </View>
 
         {/* Money Map Panel */}
-        <GlassSurface style={styles.panel} contentStyle={styles.panelInner}>
+        <View style={[styles.panel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.panelHeader}>
             <View>
               <Text style={[styles.kicker, { color: colors.primary }]}>MONEY MAP</Text>
@@ -208,13 +201,13 @@ export default function OverviewScreen() {
             <Text style={[styles.footerLabel, { color: colors.muted }]}>Highest spending category</Text>
             <Text style={[styles.footerValue, { color: colors.foreground }]}>{topCategorySummary}</Text>
           </View>
-        </GlassSurface>
+        </View>
 
         {/* Daily Rhythm Weekly Chart */}
         <DailyRhythm expenses={sortedExpenses} />
 
         {/* Latest Activity Panel */}
-        <GlassSurface style={styles.panel} contentStyle={styles.panelInner}>
+        <View style={[styles.panel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={styles.panelHeader}>
             <View>
               <Text style={[styles.kicker, { color: colors.primary }]}>LATEST ACTIVITY</Text>
@@ -223,21 +216,23 @@ export default function OverviewScreen() {
             <Ionicons name="arrow-up" size={17} color={colors.primary} />
           </View>
 
-          {recentExpenses.length === 0 ? (
+          {sortedExpenses.length === 0 ? (
             <View style={styles.emptyRecent}>
               <Text style={[styles.emptyRecentText, { color: colors.muted }]}>No transactions yet</Text>
             </View>
           ) : (
-            recentExpenses.map((expense) => (
-              <ExpenseRow
-                key={expense.id}
-                expense={expense}
-                onEdit={() => setEditingExpense(expense)}
-                onDelete={() => removeExpense(expense.id)}
-              />
-            ))
+            sortedExpenses
+              .slice(0, 5)
+              .map((expense) => (
+                <ExpenseRow
+                  key={expense.id}
+                  expense={expense}
+                  onEdit={() => setEditingExpense(expense)}
+                  onDelete={() => removeExpense(expense.id)}
+                />
+              ))
           )}
-        </GlassSurface>
+        </View>
 
         {/* Spending Insight Card */}
         <SpendingInsight expenses={monthExpenses} />
@@ -247,18 +242,17 @@ export default function OverviewScreen() {
       <ExpenseModal
         visible={showAddModal || editingExpense !== null}
         initialExpense={editingExpense}
-        onClose={handleCloseModal}
-        onSubmit={handleModalSubmit}
-      />
-
-      {/* Spending Pulse Notification Modal */}
-      <PulseDialog
-        visible={showPulseModal}
-        onClose={handleClosePulse}
-        budgetPercent={budgetPercent}
-        monthTotal={monthTotal}
-        budget={budget}
-        remaining={remaining}
+        onClose={() => {
+          setShowAddModal(false);
+          setEditingExpense(null);
+        }}
+        onSubmit={(data) => {
+          if (editingExpense) {
+            updateExpense(editingExpense.id, data);
+          } else {
+            addExpense(data);
+          }
+        }}
       />
     </ScreenContainer>
   );
@@ -315,6 +309,8 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 12,
+    borderWidth: 1,
   },
   notificationDot: {
     position: "absolute",
@@ -338,6 +334,8 @@ const styles = StyleSheet.create({
     gap: 7,
     paddingHorizontal: 12,
     height: 38,
+    borderRadius: 10,
+    borderWidth: 1,
   },
   monthText: {
     fontSize: 12,
@@ -349,7 +347,7 @@ const styles = StyleSheet.create({
     gap: 6,
     height: 38,
     paddingHorizontal: 15,
-    borderRadius: 14,
+    borderRadius: 10,
     shadowColor: "#EB6F61",
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -370,10 +368,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   panel: {
-    marginBottom: 16,
-  },
-  panelInner: {
     padding: 18,
+    marginBottom: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.02,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   panelHeader: {
     flexDirection: "row",

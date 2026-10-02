@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Expense } from "@/types/expense";
-import { CATEGORIES } from "@/constants/categories";
-import { CategoryIcon } from "@/components/ui/category-icon";
+import { CATEGORIES, CATEGORY_META } from "@/constants/categories";
 import { useTheme } from "@/lib/theme-store";
 import { formatMoney } from "@/utils/formatters";
 
@@ -10,26 +9,22 @@ interface CategoryLegendProps {
   expenses: Expense[];
 }
 
-export const CategoryLegend = React.memo(function CategoryLegend({ expenses }: CategoryLegendProps) {
+export function CategoryLegend({ expenses }: CategoryLegendProps) {
   const { colors } = useTheme();
 
-  const totals = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const exp of expenses) {
-      if (exp.category) {
-        map.set(exp.category, (map.get(exp.category) || 0) + (exp.amount || 0));
-      }
-    }
-
-    return Array.from(map.entries())
-      .map(([category, total]) => ({
+  const totals = useMemo(
+    () =>
+      CATEGORIES.map((category) => ({
         category,
-        total,
+        total: expenses
+          .filter((expense) => expense.category === category)
+          .reduce((sum, expense) => sum + (expense.amount || 0), 0),
       }))
-      .filter((item) => item.total > 0)
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 5);
-  }, [expenses]);
+        .filter((item) => item.total > 0)
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 5),
+    [expenses]
+  );
 
   if (totals.length === 0) {
     return (
@@ -44,7 +39,7 @@ export const CategoryLegend = React.memo(function CategoryLegend({ expenses }: C
       {totals.map(({ category, total }) => (
         <View style={styles.legendRow} key={category}>
           <View style={styles.legendName}>
-            <CategoryIcon category={category} size={16} />
+            <View style={[styles.legendDot, { backgroundColor: CATEGORY_META[category].color }]} />
             <Text style={[styles.legendText, { color: colors.muted }]}>{category}</Text>
           </View>
           <Text style={[styles.legendAmount, { color: colors.foreground }]}>{formatMoney(total)}</Text>
@@ -52,7 +47,7 @@ export const CategoryLegend = React.memo(function CategoryLegend({ expenses }: C
       ))}
     </View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   legend: {
